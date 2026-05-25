@@ -1,0 +1,910 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Upwork Planner Demo Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-alt: #f3f8f5;
+      --dark: #0f1117;
+      --surface: #ffffff;
+      --surface-soft: #e9f2ed;
+      --text: #111714;
+      --muted: #35433c;
+      --line: #b9cbc2;
+      --accent: #08745f;
+      --accent-2: #175f9e;
+      --accent-3: #9c6900;
+      --success: #176b3f;
+      --danger: #a92d27;
+      --amber: #986500;
+      --code: #1e1e2e;
+      --font-display: 'Bricolage Grotesque', Georgia, serif;
+      --font-body: 'DM Sans', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', Consolas, monospace;
+      --nav-h: 56px;
+      --shadow: 0 16px 48px rgba(15, 17, 23, 0.14);
+      --radius: 8px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-snap-type: y proximity; scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.55;
+    }
+    button, input, select { font: inherit; }
+    button { min-height: 44px; cursor: pointer; }
+    .top-nav {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 50;
+      height: var(--nav-h);
+      background: rgba(15, 17, 23, 0.96);
+      color: #fff;
+      display: none;
+      align-items: center;
+      gap: 18px;
+      padding: 0 22px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .top-nav.visible { display: flex; }
+    .brand { font-family: var(--font-display); font-weight: 800; white-space: nowrap; }
+    .nav-links {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      flex: 1;
+    }
+    .nav-links a {
+      color: rgba(255,255,255,0.88);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 9px 11px;
+      border-radius: var(--radius);
+      white-space: nowrap;
+    }
+    .nav-links a.active, .nav-links a:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.10);
+    }
+    .progress {
+      width: 120px;
+      height: 5px;
+      background: rgba(255,255,255,0.14);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress span { display: block; height: 100%; width: 0; background: var(--accent); }
+    .module {
+      min-height: 100vh;
+      min-height: 100dvh;
+      scroll-snap-align: start;
+      padding: calc(var(--nav-h) + 46px) 24px 56px;
+    }
+    .module:nth-child(odd) { background: var(--bg); }
+    .module:nth-child(even) { background: var(--bg-alt); }
+    .module-content { max-width: 1120px; margin: 0 auto; }
+    .narrow { max-width: 850px; }
+    .module.hook {
+      background: var(--dark);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 7vw;
+    }
+    .module.hook .module-content { max-width: 1040px; }
+    .module.hook h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.15rem, 5.1vw, 5.75rem);
+      line-height: 1.05;
+      letter-spacing: 0;
+      margin: 0;
+      color: #fff;
+    }
+    .module.hook p {
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 2.1vw, 2rem);
+      margin: 30px 0 0;
+      color: rgba(255,255,255,0.90);
+    }
+    .underline { text-decoration: underline; text-decoration-thickness: 0.13em; text-decoration-color: var(--accent); text-underline-offset: 0.12em; }
+    .eyebrow {
+      font: 700 12px/1 var(--font-mono);
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 14px;
+    }
+    h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 4rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+      margin: 0 0 14px;
+    }
+    h3 {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      letter-spacing: 0;
+      margin: 0 0 8px;
+    }
+    .lead {
+      font-size: clamp(1.05rem, 1.55vw, 1.3rem);
+      color: var(--muted);
+      max-width: 780px;
+      margin: 0 0 28px;
+    }
+    .grid { display: grid; gap: 18px; }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 10px rgba(15,17,23,0.08);
+      padding: 22px;
+    }
+    .metric {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-height: 112px;
+      justify-content: center;
+    }
+    .metric strong {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1;
+    }
+    .metric span { color: var(--muted); font-weight: 600; }
+    .split {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .toggle-controls {
+      display: inline-flex;
+      padding: 4px;
+      background: var(--dark);
+      border-radius: var(--radius);
+      margin: 18px 0;
+    }
+    .toggle-btn, .currency-btn, .tab-btn, .scenario-btn, .seq-btn, .reset-btn {
+      border: 0;
+      border-radius: 7px;
+      padding: 10px 16px;
+      font-weight: 800;
+      background: transparent;
+      color: rgba(255,255,255,0.70);
+    }
+    .toggle-btn.active, .currency-btn.active, .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    .panel { display: none; opacity: 0; transform: translateY(10px); }
+    .panel.active { display: block; animation: in 360ms var(--ease) forwards; }
+    @keyframes in { to { opacity: 1; transform: translateY(0); } }
+    .timeline { display: grid; gap: 12px; }
+    .step {
+      display: grid;
+      grid-template-columns: 36px 1fr auto;
+      gap: 14px;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 15px;
+    }
+    .step.before { border-left-color: var(--danger); }
+    .step.after { border-left-color: var(--success); }
+    .num {
+      width: 32px; height: 32px; border-radius: 999px;
+      display: grid; place-items: center;
+      background: var(--surface-soft);
+      font-family: var(--font-display);
+      font-weight: 800;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font: 700 11px/1 var(--font-mono);
+      text-transform: uppercase;
+      color: #1d2a24;
+      background: #e7f0eb;
+      white-space: nowrap;
+    }
+    .badge.red { background: #fde2df; color: var(--danger); }
+    .badge.green { background: #dff2e7; color: var(--success); }
+    .badge.blue { background: #dcecff; color: var(--accent-2); }
+    .callout {
+      margin-top: 20px;
+      padding: 22px;
+      background: var(--dark);
+      color: #fff;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+    .callout strong { font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.6rem); }
+    .map-wrap, .integration-wrap {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+    svg { max-width: 100%; height: auto; display: block; }
+    .flow-line {
+      stroke: #5c8173;
+      stroke-width: 3;
+      fill: none;
+      stroke-dasharray: 9 9;
+      animation: flow 2.5s linear infinite;
+    }
+    @keyframes flow { to { stroke-dashoffset: -36; } }
+    .arch-node rect, .break-node rect { fill: #fff; stroke: #8fa79b; stroke-width: 2; rx: 8; }
+    .arch-node text, .break-node text { font: 800 14px var(--font-body); fill: #111714; pointer-events: none; }
+    .arch-node { cursor: pointer; }
+    .arch-node.active rect { stroke: var(--accent); stroke-width: 4; filter: drop-shadow(0 8px 14px rgba(15,139,116,0.22)); }
+    .arch-node.dim { opacity: 0.42; }
+    .detail-panel {
+      margin-top: 16px;
+      border-radius: var(--radius);
+      background: var(--surface-soft);
+      padding: 18px;
+      min-height: 132px;
+    }
+    .io-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .seq-shell { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+    .seq-progress { height: 8px; background: var(--surface-soft); border-radius: 999px; overflow: hidden; margin-bottom: 18px; }
+    .seq-progress span { display: block; height: 100%; width: 14%; background: var(--accent); transition: width 300ms var(--ease); }
+    .seq-step {
+      display: none;
+      grid-template-columns: 54px 1fr;
+      gap: 18px;
+      align-items: start;
+      min-height: 190px;
+    }
+    .seq-step.active { display: grid; animation: in 300ms var(--ease) forwards; }
+    .seq-marker {
+      width: 48px; height: 48px; border-radius: 50%;
+      display: grid; place-items: center;
+      background: var(--accent);
+      color: #fff;
+      font: 800 22px var(--font-display);
+    }
+    details { margin-top: 12px; color: var(--muted); }
+    summary { cursor: pointer; font-weight: 800; color: var(--text); min-height: 44px; display: flex; align-items: center; }
+    .seq-controls { display: flex; justify-content: space-between; gap: 12px; margin-top: 18px; }
+    .seq-btn, .reset-btn { background: var(--dark); color: #fff; }
+    .scenario-list { display: grid; gap: 10px; }
+    .scenario-btn {
+      text-align: left;
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+    .scenario-btn.active { border-color: var(--amber); box-shadow: inset 4px 0 0 var(--amber); }
+    .break-node.healthy rect { stroke: var(--success); }
+    .break-node.warn rect { stroke: var(--amber); fill: #fff1c7; }
+    .break-node.fail rect { stroke: var(--danger); fill: #fde2df; }
+    .spoke { transition: opacity 200ms var(--ease), transform 200ms var(--ease); }
+    .spoke:hover, .spoke:focus { transform: translateY(-4px); }
+    .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+    .dot { width: 10px; height: 10px; border-radius: 999px; display: inline-block; margin-right: 7px; }
+    .stack-card { display: grid; gap: 12px; }
+    .stack-role { color: var(--muted); font-weight: 800; }
+    .vs {
+      background: var(--surface-soft);
+      border-left: 3px solid var(--accent);
+      padding: 12px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .cost-table { width: 100%; border-collapse: collapse; overflow: hidden; }
+    .cost-table th, .cost-table td { padding: 14px 10px; border-bottom: 1px solid var(--line); text-align: left; }
+    .cost-table td:last-child, .cost-table th:last-child { text-align: right; font-family: var(--font-mono); }
+    .currency-toggle { display: inline-flex; padding: 4px; background: var(--dark); border-radius: var(--radius); }
+    .code-panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .translation-tabs { display: flex; gap: 6px; padding: 10px; background: var(--dark); overflow-x: auto; }
+    .translation-body { display: none; grid-template-columns: 1fr 1fr; }
+    .translation-body.active { display: grid; }
+    pre {
+      margin: 0;
+      padding: 20px;
+      min-height: 420px;
+      overflow: hidden;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: var(--code);
+      color: #e8eaf6;
+      font: 13px/1.58 var(--font-mono);
+    }
+    .english-side { padding: 20px; background: #fbf8f1; }
+    .line-translation {
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid #eadfce;
+      color: var(--muted);
+    }
+    .line-translation b { font-family: var(--font-mono); color: var(--accent); }
+    .overview {
+      position: fixed;
+      inset: var(--nav-h) 0 0;
+      background: rgba(15,17,23,0.96);
+      color: #fff;
+      z-index: 45;
+      display: none;
+      padding: 32px;
+      overflow: auto;
+    }
+    .overview.visible { display: block; }
+    .overview-grid { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .overview a { color: #fff; text-decoration: none; border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius); padding: 18px; background: rgba(255,255,255,0.06); }
+    .animate-in { opacity: 0; transform: translateY(18px); transition: opacity 520ms var(--ease), transform 520ms var(--ease); }
+    .animate-in.visible { opacity: 1; transform: translateY(0); }
+    .source-note { color: var(--muted); font-size: 12px; margin-top: 14px; }
+    .source-note a { color: var(--accent-2); }
+    @media (max-width: 860px) {
+      .top-nav { padding: 0 12px; gap: 10px; }
+      .progress { display: none; }
+      .module { padding-left: 16px; padding-right: 16px; }
+      .grid-2, .grid-3, .split, .translation-body { grid-template-columns: 1fr; }
+      .callout { align-items: flex-start; flex-direction: column; }
+      .step { grid-template-columns: 32px 1fr; }
+      .step .badge { grid-column: 2; width: max-content; max-width: 100%; white-space: normal; }
+      .overview-grid { grid-template-columns: 1fr; }
+      pre { min-height: auto; }
+    }
+    @media print {
+      .top-nav, .overview, .seq-controls, .toggle-controls, .translation-tabs, button { display: none !important; }
+      html { scroll-snap-type: none; }
+      .module { min-height: auto; break-after: page; padding: 30px; }
+      .panel, .translation-body { display: block !important; opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="top-nav" aria-label="Demo navigation">
+    <div class="brand">Upwork Planner</div>
+    <div class="nav-links">
+      <a href="#problem">The Problem</a>
+      <a href="#solution">What It Does</a>
+      <a href="#workflow">How It Works</a>
+      <a href="#architecture">Moving Parts</a>
+      <a href="#resilience">What Could Break</a>
+      <a href="#tools">Why These Tools</a>
+      <a href="#integrations">Integrations</a>
+      <a href="#live">Going Live</a>
+      <a href="#next">Next Steps</a>
+    </div>
+    <div class="progress" aria-hidden="true"><span></span></div>
+  </nav>
+
+  <aside class="overview" id="overview" aria-label="Overview">
+    <div class="overview-grid">
+      <a href="#problem">The Problem<br><small>Manual job screening costs time and attention.</small></a>
+      <a href="#solution">What It Does<br><small>AI scoring turns scraped listings into a ranked plan.</small></a>
+      <a href="#workflow">How It Works<br><small>From dataset to apply/skip decision.</small></a>
+      <a href="#architecture">Moving Parts<br><small>Click through the system map.</small></a>
+      <a href="#resilience">What Could Break<br><small>Failure modes and recovery expectations.</small></a>
+      <a href="#tools">Why These Tools<br><small>Business reasons behind the stack.</small></a>
+      <a href="#integrations">Integrations<br><small>Upwork data, OpenRouter, NocoDB, browser UI.</small></a>
+      <a href="#live">Going Live<br><small>Cost, maintenance, scaling, ownership.</small></a>
+      <a href="#next">Next Steps<br><small>What is needed to use it in production.</small></a>
+    </div>
+  </aside>
+
+  <main>
+    <section class="module hook" id="hook">
+      <div class="module-content">
+        <h1>Every weak Upwork lead you chase can steal <span class="underline">20 minutes of senior attention</span> before you even write a proposal.</h1>
+        <p>In the next 10 minutes, you will see how Upwork Planner turns scraped jobs into a ranked application plan.</p>
+      </div>
+    </section>
+
+    <section class="module" id="problem">
+      <div class="module-content">
+        <p class="eyebrow">The Problem</p>
+        <h2>Freelancers lose deals before the proposal, because the triage is scattered.</h2>
+        <p class="lead">The current workflow is usually a browser tab, a spreadsheet, a gut feeling, and too many half-read job posts. Upwork Planner replaces that with a repeatable scoring system that shows which jobs deserve action first.</p>
+        <div class="toggle-controls" role="tablist" aria-label="Before and after">
+          <button class="toggle-btn active" data-panel="before">Before</button>
+          <button class="toggle-btn" data-panel="after">After</button>
+        </div>
+        <div class="before-after-toggle">
+          <div class="panel before-panel active">
+            <div class="timeline">
+              <div class="step before"><div class="num">1</div><div><b>Open each job manually</b><br><span class="muted">Read title, budget, proposals, client history, and questions.</span></div><span class="badge red">8-12 min</span></div>
+              <div class="step before"><div class="num">2</div><div><b>Judge fit from memory</b><br><span class="muted">Compare against skills, competition, phase, and budget pressure.</span></div><span class="badge red">inconsistent</span></div>
+              <div class="step before"><div class="num">3</div><div><b>Copy notes into a sheet</b><br><span class="muted">Hooks, risks, client quality, and screening questions are easy to miss.</span></div><span class="badge red">handoff risk</span></div>
+              <div class="step before"><div class="num">4</div><div><b>Decide under time pressure</b><br><span class="muted">A good job may age out while low-quality posts consume attention.</span></div><span class="badge red">missed timing</span></div>
+            </div>
+          </div>
+          <div class="panel after-panel">
+            <div class="timeline">
+              <div class="step after"><div class="num">1</div><div><b>Import scraped listings once</b><br><span class="muted">The setup script reads the dataset and creates a structured record for every job.</span></div><span class="badge green">automated</span></div>
+              <div class="step after"><div class="num">2</div><div><b>AI scores each opportunity</b><br><span class="muted">Skill fit, client quality, reward versus effort, and competition advantage become comparable numbers.</span></div><span class="badge green">repeatable</span></div>
+              <div class="step after"><div class="num">3</div><div><b>Dashboard ranks the list</b><br><span class="muted">Search, filters, and sorting surface the best opportunities first.</span></div><span class="badge green">seconds</span></div>
+              <div class="step after"><div class="num">4</div><div><b>Archive noise, inspect winners</b><br><span class="muted">The freelancer keeps an active pipeline and opens details only where the score justifies it.</span></div><span class="badge green">focused</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="callout"><span>Conservative working estimate</span><strong>19 jobs screened in one run, then managed from one dashboard.</strong></div>
+      </div>
+    </section>
+
+    <section class="module" id="solution">
+      <div class="module-content">
+        <p class="eyebrow">The Solution</p>
+        <h2>A decision cockpit for Upwork applications, not another job list.</h2>
+        <p class="lead">The app ingests scraped Upwork listings, enriches each listing with AI strategy fields, saves the records in NocoDB, and serves a focused dashboard for deciding what to apply to, skip, archive, or inspect.</p>
+        <div class="grid grid-3">
+          <div class="card metric"><strong>19</strong><span>scraped jobs in the included dataset</span></div>
+          <div class="card metric"><strong>4-part</strong><span>weighted apply score: skill, client, effort, competition</span></div>
+          <div class="card metric"><strong>200</strong><span>records fetched per dashboard call before client-side filtering</span></div>
+        </div>
+        <div class="map-wrap" style="margin-top:22px">
+          <svg viewBox="0 0 900 360" role="img" aria-label="Integration overview">
+            <path class="flow-line" d="M115 180 C220 90, 275 90, 360 150"></path>
+            <path class="flow-line" d="M360 190 C290 270, 235 275, 140 240"></path>
+            <path class="flow-line" d="M455 150 C545 90, 610 90, 715 160"></path>
+            <path class="flow-line" d="M455 205 C555 270, 615 270, 735 220"></path>
+            <g>
+              <rect x="30" y="130" width="170" height="74" rx="8" fill="#fff" stroke="#8fa79b" stroke-width="2"></rect>
+              <text x="115" y="163" text-anchor="middle" font-weight="800">Scraped Jobs</text>
+              <text x="115" y="185" text-anchor="middle" fill="#35433c" font-size="13">raw Upwork data</text>
+            </g>
+            <g>
+              <rect x="320" y="130" width="170" height="90" rx="8" fill="#fff" stroke="#08745f" stroke-width="3"></rect>
+              <text x="405" y="164" text-anchor="middle" font-weight="800">Planner Engine</text>
+              <text x="405" y="187" text-anchor="middle" fill="#35433c" font-size="13">score and strategy</text>
+            </g>
+            <g>
+              <rect x="700" y="115" width="170" height="74" rx="8" fill="#fff" stroke="#8fa79b" stroke-width="2"></rect>
+              <text x="785" y="148" text-anchor="middle" font-weight="800">NocoDB</text>
+              <text x="785" y="170" text-anchor="middle" fill="#35433c" font-size="13">searchable records</text>
+            </g>
+            <g>
+              <rect x="700" y="210" width="170" height="74" rx="8" fill="#fff" stroke="#8fa79b" stroke-width="2"></rect>
+              <text x="785" y="243" text-anchor="middle" font-weight="800">Next Dashboard</text>
+              <text x="785" y="265" text-anchor="middle" fill="#35433c" font-size="13">apply plan UI</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="module" id="workflow">
+      <div class="module-content">
+        <p class="eyebrow">How It Works</p>
+        <h2>One listing becomes a decision-ready opportunity record.</h2>
+        <p class="lead">This walkthrough follows the real ingestion flow in `scripts/setup-nocodb.mjs`: dataset row, AI enrichment, weighted score, database insert, then dashboard review.</p>
+        <div class="seq-shell">
+          <div class="seq-progress"><span id="seqProgress"></span></div>
+          <div class="seq-step active" data-step="1">
+            <div class="seq-marker">1</div>
+            <div><span class="badge blue">Dataset</span><h3>A scraped Upwork job enters the system.</h3><p>The included dataset contains 19 records with title, description, budget, client history, proposals, location, tags, and screening questions.</p><details><summary>Behind the scenes</summary><p>The setup script reads `dataset_upwork-job-scraper_2026-05-24_06-55-21-455.json` from the project root.</p></details></div>
+          </div>
+          <div class="seq-step" data-step="2">
+            <div class="seq-marker">2</div>
+            <div><span class="badge blue">AI Strategy</span><h3>The listing is translated into strategy fields.</h3><p>OpenRouter is asked to classify phase, complexity, risk flags, hooks, required questions, and proposal recommendations.</p><details><summary>Behind the scenes</summary><p>The prompt asks for strict JSON, which keeps the response usable as database columns instead of free-form notes.</p></details></div>
+          </div>
+          <div class="seq-step" data-step="3">
+            <div class="seq-marker">3</div>
+            <div><span class="badge blue">Score</span><h3>The system calculates a single apply score.</h3><p>The score weights skill fit most heavily, then client quality, reward versus effort, and competition advantage.</p><details><summary>Behind the scenes</summary><p>The code computes: 0.4 x skill + 0.3 x client + 0.2 x reward + 0.1 x competition.</p></details></div>
+          </div>
+          <div class="seq-step" data-step="4">
+            <div class="seq-marker">4</div>
+            <div><span class="badge blue">NocoDB</span><h3>The enriched job is saved as a permanent record.</h3><p>NocoDB becomes the searchable source of truth for job metadata, AI scoring, decision status, and archive state.</p><details><summary>Behind the scenes</summary><p>The script creates the `UpworkJobs` table if needed, then inserts every enriched record.</p></details></div>
+          </div>
+          <div class="seq-step" data-step="5">
+            <div class="seq-marker">5</div>
+            <div><span class="badge blue">Dashboard</span><h3>The freelancer works from a ranked pipeline.</h3><p>The Next app fetches records, filters active versus archived jobs, sorts by score or client quality, and opens detailed proposal guidance.</p><details><summary>Behind the scenes</summary><p>Status changes are written back through `/api/jobs` so archived jobs stop distorting active dashboard stats.</p></details></div>
+          </div>
+          <div class="seq-controls">
+            <button class="seq-btn" id="prevSeq">Previous Step</button>
+            <button class="seq-btn" id="nextSeq">Next Step</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="module" id="architecture">
+      <div class="module-content">
+        <p class="eyebrow">The Architecture</p>
+        <h2>Five moving parts, each with a clear business job.</h2>
+        <p class="lead">Click any component to see what enters it, what leaves it, and why it matters to the person deciding where to spend proposal time.</p>
+        <div class="map-wrap">
+          <svg viewBox="0 0 920 500" aria-label="Clickable architecture map">
+            <path class="flow-line" d="M150 250 L330 150 L510 150 L735 250"></path>
+            <path class="flow-line" d="M330 350 L510 350 L735 250"></path>
+            <path class="flow-line" d="M735 250 L735 385"></path>
+            <g class="arch-node" data-node="scraper"><rect x="50" y="210" width="190" height="82"></rect><text x="145" y="246" text-anchor="middle">Scraped Job File</text><text x="145" y="270" text-anchor="middle" font-size="12">new opportunities</text></g>
+            <g class="arch-node" data-node="setup"><rect x="295" y="108" width="190" height="82"></rect><text x="390" y="144" text-anchor="middle">Setup Run</text><text x="390" y="168" text-anchor="middle" font-size="12">import and enrich</text></g>
+            <g class="arch-node" data-node="ai"><rect x="540" y="108" width="190" height="82"></rect><text x="635" y="144" text-anchor="middle">AI Evaluator</text><text x="635" y="168" text-anchor="middle" font-size="12">strategy fields</text></g>
+            <g class="arch-node" data-node="database"><rect x="640" y="210" width="190" height="82"></rect><text x="735" y="246" text-anchor="middle">Opportunity Store</text><text x="735" y="270" text-anchor="middle" font-size="12">NocoDB records</text></g>
+            <g class="arch-node" data-node="dashboard"><rect x="640" y="350" width="190" height="82"></rect><text x="735" y="386" text-anchor="middle">Decision Dashboard</text><text x="735" y="410" text-anchor="middle" font-size="12">search and archive</text></g>
+          </svg>
+          <div class="detail-panel" id="archDetail"><h3>Click a component</h3><p>Start with the part of the workflow you care about most.</p></div>
+          <button class="reset-btn" id="resetArch">Reset Map</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="module" id="resilience">
+      <div class="module-content">
+        <p class="eyebrow">What Could Break</p>
+        <h2>The system is useful because it is honest about failure.</h2>
+        <p class="lead">This is not a hidden black box. The current code catches API failures, falls back when AI returns unusable JSON, validates archive requests, and keeps the database as the source of truth.</p>
+        <div class="split">
+          <div class="map-wrap">
+            <svg viewBox="0 0 560 360" aria-label="Failure mode map">
+              <path class="flow-line" d="M85 180 L215 95 L345 95 L475 180"></path>
+              <path class="flow-line" d="M475 180 L475 285"></path>
+              <g class="break-node healthy" data-break-node="file"><rect x="25" y="145" width="120" height="70"></rect><text x="85" y="185" text-anchor="middle">File</text></g>
+              <g class="break-node healthy" data-break-node="script"><rect x="170" y="60" width="120" height="70"></rect><text x="230" y="100" text-anchor="middle">Script</text></g>
+              <g class="break-node healthy" data-break-node="ai"><rect x="315" y="60" width="120" height="70"></rect><text x="375" y="100" text-anchor="middle">AI</text></g>
+              <g class="break-node healthy" data-break-node="db"><rect x="415" y="145" width="120" height="70"></rect><text x="475" y="185" text-anchor="middle">NocoDB</text></g>
+              <g class="break-node healthy" data-break-node="ui"><rect x="415" y="250" width="120" height="70"></rect><text x="475" y="290" text-anchor="middle">UI</text></g>
+            </svg>
+          </div>
+          <div>
+            <div class="scenario-list">
+              <button class="scenario-btn active" data-scenario="aiDown">What if the AI API returns an error?</button>
+              <button class="scenario-btn" data-scenario="badJson">What if the AI response is not valid JSON?</button>
+              <button class="scenario-btn" data-scenario="dbDown">What if NocoDB refuses a record?</button>
+              <button class="scenario-btn" data-scenario="badArchive">What if someone sends a bad archive request?</button>
+            </div>
+            <div class="detail-panel" id="scenarioDetail"></div>
+            <button class="reset-btn" id="recoverBtn">Show Recovery</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="module" id="tools">
+      <div class="module-content">
+        <p class="eyebrow">Why These Tools</p>
+        <h2>The stack is chosen for fast setup, low operating cost, and easy handoff.</h2>
+        <p class="lead">Each tool has a business reason. The implementation favors familiar managed services and readable TypeScript/JavaScript over a complex custom backend.</p>
+        <div class="grid grid-3">
+          <div class="card stack-card"><h3>Next.js 16</h3><span class="stack-role">Dashboard and API layer</span><p>One app serves the interface and the job endpoints, keeping deployment simple for a solo operator or small agency.</p><div class="vs"><b>vs. separate backend:</b> fewer services to maintain for a focused internal decision tool.</div></div>
+          <div class="card stack-card"><h3>NocoDB</h3><span class="stack-role">Opportunity database</span><p>A spreadsheet-like database lets non-technical users inspect and correct records without asking a developer for every change.</p><div class="vs"><b>vs. raw Postgres admin:</b> easier handoff and safer day-to-day operations.</div></div>
+          <div class="card stack-card"><h3>OpenRouter</h3><span class="stack-role">AI model gateway</span><p>The scoring logic can use a cost-efficient model today and switch providers later without rewriting the whole workflow.</p><div class="vs"><b>vs. one direct model account:</b> more flexibility when model pricing or quality changes.</div></div>
+          <div class="card stack-card"><h3>React 19</h3><span class="stack-role">Responsive work surface</span><p>Search, filters, sorting, tabs, and archive controls stay fast after the first data load.</p><div class="vs"><b>vs. static spreadsheet:</b> faster scanning and fewer missed follow-ups.</div></div>
+          <div class="card stack-card"><h3>Node setup script</h3><span class="stack-role">Repeatable ingestion</span><p>The import can be rerun on a fresh dataset and creates the expected table shape before inserting records.</p><div class="vs"><b>vs. manual CSV import:</b> scoring, schema, and data cleanup happen in one repeatable run.</div></div>
+          <div class="card stack-card"><h3>Vercel-ready app</h3><span class="stack-role">Low-friction hosting</span><p>The Next app can run locally for private use or deploy to a managed platform when multiple devices need access.</p><div class="vs"><b>vs. unmanaged VPS:</b> fewer server chores for the buyer.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="module" id="integrations">
+      <div class="module-content">
+        <p class="eyebrow">Integrations</p>
+        <h2>It plugs into the places where the work already happens.</h2>
+        <p class="lead">The current codebase has four real external surfaces: Upwork data, OpenRouter, NocoDB, and the deployed browser app. No imaginary CRM or Slack integration is shown here.</p>
+        <div class="integration-wrap">
+          <svg viewBox="0 0 900 520" role="img" aria-label="Integration map">
+            <circle cx="450" cy="260" r="92" fill="#08745f"></circle>
+            <text x="450" y="250" text-anchor="middle" fill="#fff" font-size="22" font-weight="800">Upwork</text>
+            <text x="450" y="282" text-anchor="middle" fill="#fff" font-size="22" font-weight="800">Planner</text>
+            <path class="flow-line" d="M215 120 L380 220"></path>
+            <path class="flow-line" d="M685 120 L520 220"></path>
+            <path class="flow-line" d="M215 400 L380 300"></path>
+            <path class="flow-line" d="M685 400 L520 300"></path>
+            <g class="spoke" tabindex="0"><rect x="80" y="70" width="230" height="94" rx="8" fill="#fff" stroke="#8fa79b"></rect><text x="195" y="105" text-anchor="middle" font-weight="800">Upwork Dataset</text><text x="195" y="130" text-anchor="middle" fill="#35433c">IN: scraped job listings</text></g>
+            <g class="spoke" tabindex="0"><rect x="590" y="70" width="230" height="94" rx="8" fill="#fff" stroke="#8fa79b"></rect><text x="705" y="105" text-anchor="middle" font-weight="800">OpenRouter</text><text x="705" y="130" text-anchor="middle" fill="#35433c">OUT/IN: AI scoring JSON</text></g>
+            <g class="spoke" tabindex="0"><rect x="80" y="355" width="230" height="94" rx="8" fill="#fff" stroke="#8fa79b"></rect><text x="195" y="390" text-anchor="middle" font-weight="800">NocoDB</text><text x="195" y="415" text-anchor="middle" fill="#35433c">IN/OUT: permanent records</text></g>
+            <g class="spoke" tabindex="0"><rect x="590" y="355" width="230" height="94" rx="8" fill="#fff" stroke="#8fa79b"></rect><text x="705" y="390" text-anchor="middle" font-weight="800">Browser Dashboard</text><text x="705" y="415" text-anchor="middle" fill="#35433c">OUT: ranked decisions</text></g>
+          </svg>
+          <div class="legend">
+            <span><i class="dot" style="background:#2b72b8"></i>Data source</span>
+            <span><i class="dot" style="background:#7b6daa"></i>AI processing</span>
+            <span><i class="dot" style="background:#d99a21"></i>Storage</span>
+            <span><i class="dot" style="background:#287c4d"></i>Decision interface</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="module" id="live">
+      <div class="module-content">
+        <p class="eyebrow">Going Live</p>
+        <h2>For the included scale, the running cost is almost entirely optional hosting.</h2>
+        <p class="lead">The repository includes 19 jobs and a one-time enrichment flow. The estimates below assume 500 new jobs analyzed per month, 2,500 input tokens and 400 output tokens per job, one freelancer, Vercel Hobby for personal use, and NocoDB Cloud Free until record/API limits are exceeded.</p>
+        <div class="grid grid-3">
+          <div class="card"><h3>Day 1</h3><p>Run `npm run setup-nocodb`, load the dashboard locally, review active jobs, archive noise.</p><p><b>Maintenance:</b> 1 hour/month</p></div>
+          <div class="card"><h3>After 6 Months</h3><p>Move to scheduled scraping, rotate API keys, and review scoring calibration from winning proposals.</p><p><b>Maintenance:</b> 2-3 hours/month</p></div>
+          <div class="card"><h3>At Scale</h3><p>Upgrade NocoDB or self-host, add scheduled ingestion, audit logs, and multi-user access.</p><p><b>Maintenance:</b> managed owner plus vendor support</p></div>
+        </div>
+        <div class="card" style="margin-top:22px">
+          <div style="display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap">
+            <h3>Estimated Monthly Cost</h3>
+            <div class="currency-toggle" aria-label="Currency toggle">
+              <button class="currency-btn active" data-currency="inr">INR</button>
+              <button class="currency-btn" data-currency="usd">USD</button>
+            </div>
+          </div>
+          <table class="cost-table">
+            <thead><tr><th>Service</th><th>Planning basis</th><th class="money-head">INR/month</th></tr></thead>
+            <tbody>
+              <tr><td>OpenRouter AI enrichment</td><td>500 jobs/month, Flash-class proxy pricing</td><td data-usd="0.70" data-inr="68">INR 68</td></tr>
+              <tr><td>NocoDB Cloud Free</td><td>Fits 1,000 record and 1,000 API call monthly free tier for this demo scale</td><td data-usd="0" data-inr="0">INR 0</td></tr>
+              <tr><td>Vercel Hobby</td><td>Personal/small-scale use, under included invocation limits</td><td data-usd="0" data-inr="0">INR 0</td></tr>
+              <tr><td><b>Total</b></td><td><b>With 2.5 percent card/FX levy applied to AI spend</b></td><td><b data-usd="0.70" data-inr="68">INR 68</b></td></tr>
+            </tbody>
+          </table>
+          <p class="source-note">Rate: 1 USD = 95.1499 INR on May 25, 2026, plus 2.5 percent levy. Sources: <a href="https://www.exchangerates.org.uk/Dollars-to-Rupees-currency-conversion-page.html">ExchangeRates.org.uk</a>, <a href="https://openrouter.ai/models?o=pricing-high-to-low&order=pricing-low-to-high">OpenRouter model listings</a>, <a href="https://nocodb.com/pricing">NocoDB pricing</a>, <a href="https://vercel.com/docs/plans/hobby">Vercel Hobby docs</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="module" id="code">
+      <div class="module-content">
+        <p class="eyebrow">Under The Hood</p>
+        <h2>The automation logic is inspectable, not hidden.</h2>
+        <p class="lead">These snippets are copied exactly from the repository and paired with buyer-language explanations.</p>
+        <div class="code-panel">
+          <div class="translation-tabs">
+            <button class="tab-btn active" data-tab="snippet-score">Scoring</button>
+            <button class="tab-btn" data-tab="snippet-status">Archive Update</button>
+            <button class="tab-btn" data-tab="snippet-route">Job API</button>
+          </div>
+          <div class="translation-body active" id="snippet-score">
+            <div class="code-side"><pre><code>function computeApplyScore(ai) {
+  const score =
+    0.4 * clamp(ai.skillFit, 0, 10) +
+    0.3 * clamp(ai.clientQuality, 0, 10) +
+    0.2 * clamp(ai.rewardVsEffort, 0, 10) +
+    0.1 * clamp(ai.competitionAdvantage, 0, 10);
+  return Math.round(score * 100) / 100;
+}</code></pre></div>
+            <div class="english-side">
+              <div class="line-translation"><b>1</b><span>Starts the final scoring calculation for one job.</span></div>
+              <div class="line-translation"><b>2-6</b><span>Turns four buyer-relevant judgments into one comparable number.</span></div>
+              <div class="line-translation"><b>3</b><span>Skill fit gets the most weight because a fast win matters most.</span></div>
+              <div class="line-translation"><b>4</b><span>Client quality protects against low-value or unreliable buyers.</span></div>
+              <div class="line-translation"><b>5-6</b><span>Reward and competition keep the score grounded in market reality.</span></div>
+              <div class="line-translation"><b>7</b><span>The final score is rounded so it reads cleanly in the dashboard.</span></div>
+            </div>
+          </div>
+          <div class="translation-body" id="snippet-status">
+            <div class="code-side"><pre><code>export async function updateJobsStatus(
+  jobIds: string[],
+  status: 'active' | 'archive'
+): Promise&lt;{ success: number; failed: number }&gt; {
+  const results = await Promise.allSettled(
+    jobIds.map((id) =&gt; updateJobStatus(id, status))
+  );
+  const success = results.filter((r) =&gt; r.status === 'fulfilled' &amp;&amp; r.value).length;
+  return { success, failed: jobIds.length - success };
+}</code></pre></div>
+            <div class="english-side">
+              <div class="line-translation"><b>1-4</b><span>Defines a bulk archive or restore operation.</span></div>
+              <div class="line-translation"><b>5-7</b><span>Attempts every requested job update, even if one update fails.</span></div>
+              <div class="line-translation"><b>8</b><span>Counts how many jobs were successfully moved.</span></div>
+              <div class="line-translation"><b>9</b><span>Reports success and failure separately, so the UI can be honest.</span></div>
+            </div>
+          </div>
+          <div class="translation-body" id="snippet-route">
+            <div class="code-side"><pre><code>export async function GET() {
+  try {
+    const jobs = await getAllJobs({
+      sortField: 'absoluteDate',
+      sortDirection: 'desc',
+    });
+    return NextResponse.json(jobs);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}</code></pre></div>
+            <div class="english-side">
+              <div class="line-translation"><b>1</b><span>Runs when the dashboard asks for the job list.</span></div>
+              <div class="line-translation"><b>2-6</b><span>Fetches jobs newest first, so fresh opportunities appear first.</span></div>
+              <div class="line-translation"><b>7</b><span>Sends the clean job list back to the browser.</span></div>
+              <div class="line-translation"><b>8-10</b><span>If the database fails, returns a clear error instead of a silent blank screen.</span></div>
+              <div class="line-translation"><b>11</b><span>Marks the failure as a server problem for monitoring or support.</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="callout"><span>Under the hood</span><strong>Built for reliability, readable handoff, and quick business decisions.</strong></div>
+      </div>
+    </section>
+
+    <section class="module" id="next">
+      <div class="module-content narrow">
+        <p class="eyebrow">Next Steps</p>
+        <h2>The path from demo to daily workflow is short.</h2>
+        <p class="lead">This is already a usable internal tool. The next buyer decision is whether to run it as a personal planner, a small agency pipeline, or a managed recurring lead-triage service.</p>
+        <div class="grid grid-2">
+          <div class="card"><h3>What is needed</h3><p>NocoDB workspace, OpenRouter key, current Upwork scrape file, and the preferred scoring calibration for the freelancer's niche.</p></div>
+          <div class="card"><h3>What they get</h3><p>A repeatable weekly process: import listings, review ranked Apply jobs, inspect hooks and screening questions, archive the rest.</p></div>
+          <div class="card"><h3>First production hardening</h3><p>Add scheduled scraping, secret rotation, per-run reports, and guardrails for NocoDB API limits.</p></div>
+          <div class="card"><h3>Commercial expansion</h3><p>Support multiple freelancers or niches with separate bases, scoring profiles, and proposal outcome tracking.</p></div>
+        </div>
+        <div class="callout"><span>Recommendation</span><strong>Use it first as a weekly decision system, then automate ingestion after the scoring proves useful.</strong></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const nav = document.querySelector('.top-nav');
+      const links = Array.from(document.querySelectorAll('.nav-links a'));
+      const progress = document.querySelector('.progress span');
+      const modules = Array.from(document.querySelectorAll('.module'));
+      const overview = document.getElementById('overview');
+
+      function updateProgress() {
+        const y = window.scrollY;
+        nav.classList.toggle('visible', y > window.innerHeight * 0.55);
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        progress.style.width = max ? ((y / max) * 100) + '%' : '0%';
+        let current = modules[0].id;
+        modules.forEach((m) => {
+          if (m.getBoundingClientRect().top < window.innerHeight * 0.42) current = m.id;
+        });
+        links.forEach((a) => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
+      }
+      window.addEventListener('scroll', updateProgress, { passive: true });
+      updateProgress();
+
+      const reveal = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+      }, { threshold: 0.16 });
+      document.querySelectorAll('.animate-in, .card, .map-wrap, .seq-shell, .code-panel').forEach((el) => reveal.observe(el));
+
+      document.querySelectorAll('.toggle-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const parent = btn.closest('.module');
+          parent.querySelectorAll('.toggle-btn').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          parent.querySelectorAll('.panel').forEach((p) => p.classList.remove('active'));
+          parent.querySelector('.' + btn.dataset.panel + '-panel').classList.add('active');
+        });
+      });
+
+      let seqIndex = 0;
+      const seqSteps = Array.from(document.querySelectorAll('.seq-step'));
+      const seqProgress = document.getElementById('seqProgress');
+      function renderSeq() {
+        seqSteps.forEach((s, i) => s.classList.toggle('active', i === seqIndex));
+        seqProgress.style.width = (((seqIndex + 1) / seqSteps.length) * 100) + '%';
+      }
+      document.getElementById('nextSeq').addEventListener('click', () => { seqIndex = Math.min(seqSteps.length - 1, seqIndex + 1); renderSeq(); });
+      document.getElementById('prevSeq').addEventListener('click', () => { seqIndex = Math.max(0, seqIndex - 1); renderSeq(); });
+
+      const nodeData = {
+        scraper: { name: 'Scraped Job File', summary: 'Collects the market signal: title, description, budget, proposals, tags, and client metadata.', input: 'Upwork search export', output: 'Raw job records for enrichment' },
+        setup: { name: 'Setup Run', summary: 'Creates the table if needed, reads the dataset, calls AI, computes scores, and inserts records.', input: 'Raw dataset plus environment keys', output: 'Decision-ready records' },
+        ai: { name: 'AI Evaluator', summary: 'Turns each job post into structured strategy: risks, hooks, questions, recommendations, and score ingredients.', input: 'Job title, description, budget, client data', output: 'Strict JSON strategy fields' },
+        database: { name: 'Opportunity Store', summary: 'Keeps every job, score, recommendation, and archive status in a searchable record system.', input: 'Enriched job records', output: 'Filtered records for the app' },
+        dashboard: { name: 'Decision Dashboard', summary: 'Lets the freelancer search, sort, filter, inspect, archive, and restore opportunities.', input: 'NocoDB job records', output: 'Apply, skip, and follow-up decisions' }
+      };
+      const archDetail = document.getElementById('archDetail');
+      document.querySelectorAll('.arch-node').forEach((node) => {
+        node.addEventListener('click', () => {
+          document.querySelectorAll('.arch-node').forEach((n) => {
+            n.classList.remove('active');
+            n.classList.add('dim');
+          });
+          node.classList.add('active');
+          node.classList.remove('dim');
+          const data = nodeData[node.dataset.node];
+          archDetail.innerHTML = '<h3>' + data.name + '</h3><p>' + data.summary + '</p><div class="io-row"><span class="badge blue">IN: ' + data.input + '</span><span class="badge green">OUT: ' + data.output + '</span></div>';
+        });
+      });
+      document.getElementById('resetArch').addEventListener('click', () => {
+        document.querySelectorAll('.arch-node').forEach((n) => n.classList.remove('active', 'dim'));
+        archDetail.innerHTML = '<h3>Click a component</h3><p>Start with the part of the workflow you care about most.</p>';
+      });
+
+      const scenarios = {
+        aiDown: { nodes: ['ai'], level: 'warn', title: 'AI API returns an error', failure: 'The current job cannot be enriched automatically.', response: 'The script throws a clear OpenRouter error for hard failures. For provider-level errors returned inside a response, it logs a warning and uses default AI fields.', buyer: 'No hidden corruption: the run either stops visibly or marks conservative defaults for review.' },
+        badJson: { nodes: ['ai','script'], level: 'warn', title: 'AI response is not valid JSON', failure: 'The model returned prose or malformed JSON instead of structured fields.', response: 'The parser strips code fences, attempts JSON parse, and falls back to default scores if parsing fails.', buyer: 'The record is still usable, but should be reviewed before relying on the recommendation.' },
+        dbDown: { nodes: ['db'], level: 'fail', title: 'NocoDB refuses a record', failure: 'A token, base ID, schema, or API issue prevents insert or update.', response: 'Insert failures throw a visible error with status text. Dashboard fetch failures return a 500 error message.', buyer: 'Nothing is silently lost. The operator fixes credentials or schema, then reruns ingestion.' },
+        badArchive: { nodes: ['ui','db'], level: 'warn', title: 'Bad archive request', failure: 'Someone sends an empty job list or invalid status.', response: 'The API validates `jobIds` and only accepts `active` or `archive` before touching records.', buyer: 'Invalid actions are rejected before they can damage the pipeline.' }
+      };
+      const scenarioDetail = document.getElementById('scenarioDetail');
+      function renderScenario(key) {
+        const scenario = scenarios[key];
+        document.querySelectorAll('.break-node').forEach((n) => {
+          n.classList.remove('warn', 'fail');
+          n.classList.add('healthy');
+          if (scenario.nodes.includes(n.dataset.breakNode)) {
+            n.classList.remove('healthy');
+            n.classList.add(scenario.level);
+          }
+        });
+        scenarioDetail.innerHTML = '<h3>' + scenario.title + '</h3><p><b>Failure mode:</b> ' + scenario.failure + '</p><p><b>System response:</b> ' + scenario.response + '</p><p><b>Buyer experience:</b> ' + scenario.buyer + '</p>';
+      }
+      document.querySelectorAll('.scenario-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.scenario-btn').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderScenario(btn.dataset.scenario);
+        });
+      });
+      document.getElementById('recoverBtn').addEventListener('click', () => {
+        document.querySelectorAll('.break-node').forEach((n) => {
+          n.classList.remove('warn', 'fail');
+          n.classList.add('healthy');
+        });
+        scenarioDetail.innerHTML = '<h3>Recovery state</h3><p>Once credentials, provider availability, or request shape is corrected, the workflow can be rerun. Existing NocoDB records remain the source of truth.</p>';
+      });
+      renderScenario('aiDown');
+
+      document.querySelectorAll('.tab-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
+          document.querySelectorAll('.translation-body').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById(btn.dataset.tab).classList.add('active');
+        });
+      });
+
+      document.querySelectorAll('.currency-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.currency-btn').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          const currency = btn.dataset.currency;
+          document.querySelector('.money-head').textContent = currency === 'usd' ? 'USD/month' : 'INR/month';
+          document.querySelectorAll('[data-usd]').forEach((cell) => {
+            const value = currency === 'usd' ? Number(cell.dataset.usd) : Number(cell.dataset.inr);
+            const text = currency === 'usd' ? '$' + value.toFixed(2) : 'INR ' + value.toLocaleString('en-IN');
+            cell.textContent = text;
+          });
+        });
+      });
+
+      function go(delta) {
+        const closest = modules.reduce((best, m, i) => {
+          const d = Math.abs(m.getBoundingClientRect().top);
+          return d < best.d ? { i, d } : best;
+        }, { i: 0, d: Infinity });
+        const next = Math.max(0, Math.min(modules.length - 1, closest.i + delta));
+        modules[next].scrollIntoView({ behavior: 'smooth' });
+      }
+      window.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowDown' || event.key === 'PageDown') go(1);
+        if (event.key === 'ArrowUp' || event.key === 'PageUp') go(-1);
+        if (event.key === 'Escape') overview.classList.toggle('visible');
+      });
+      overview.addEventListener('click', (event) => {
+        if (event.target.closest('a')) overview.classList.remove('visible');
+      });
+    })();
+  </script>
+</body>
+</html>

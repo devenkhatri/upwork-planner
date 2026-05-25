@@ -6,10 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "setup-nocodb": "node scripts/setup-nocodb.mjs"
   },
   "dependencies": {
+    "dotenv": "^17.4.2",
     "next": "16.2.6",
+    "node-fetch": "^3.3.2",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
